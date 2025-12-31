@@ -3,75 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Recruitment Management System</title>
+    <title>Recruitment Management System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
         /* Login Screen */
-        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .login-box { background: white; padding: 50px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 100%; animation: slideUp 0.5s; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .login-box h1 { color: #667eea; margin-bottom: 10px; font-size: 2.5em; text-align: center; }
-        .login-box p { text-align: center; color: #666; margin-bottom: 30px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; }
-        .form-group input, .form-group select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; transition: all 0.3s; }
-        
-        .btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4); }
-        .btn-secondary { background: #f0f0f0; color: #333; }
-        .btn-small { width: auto; padding: 10px 20px; font-size: 14px; display: inline-block; }
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-        /* Dashboard Styles */
-        .dashboard { display: none; }
-        .dashboard.active { display: block; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .dashboard-header { background: white; padding: 30px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-        
-        .role-badge { display: inline-block; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+        .login-box {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+            animation: slideUp 0.5s;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-box h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+        .login-box p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-small {
+            width: auto;
+            padding: 10px 20px;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .demo-accounts {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .demo-accounts h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .demo-accounts p {
+            margin: 5px 0;
+            text-align: left;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
         .role-admin { background: #ff6b6b; color: white; }
         .role-recruiter { background: #4dabf7; color: white; }
         .role-candidate { background: #51cf66; color: white; }
 
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .menu-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; border-left: 5px solid #667eea; }
-        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3); }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-        .content-panel { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-        table th { background: #667eea; color: white; padding: 15px; text-align: left; }
-        table td { padding: 15px; border-bottom: 1px solid #e0e0e0; }
+        .menu-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 5px solid #667eea;
+        }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 15px; color: white; text-align: center; }
-        
-        .badge { display: inline-block; padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .menu-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .menu-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .content-panel {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .content-panel.active {
+            display: block;
+            animation: slideUp 0.5s;
+        }
+
+        .content-panel h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .back-btn {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .stat-card h3 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .application-card {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .application-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 3px;
+        }
+
+        .badge-applied { background: #e3f2fd; color: #1976d2; }
+        .badge-screening { background: #fff3e0; color: #f57c00; }
+        .badge-interview { background: #f3e5f5; color: #7b1fa2; }
         .badge-hired { background: #e8f5e9; color: #388e3c; }
         .badge-rejected { background: #ffebee; color: #c62828; }
-        .badge-info { background: #e3f2fd; color: #1976d2; }
-        
-        .progress-bar { background: #e0e0e0; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        .progress-fill { background: #667eea; height: 100%; }
+        .badge-warning { background: #fffde7; color: #fbc02d; }
 
-        .alert { padding: 15px; border-radius: 10px; margin: 20px 0; }
+        .score-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #764ba2;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
         .alert-info { background: #e3f2fd; border-left: 5px solid #1976d2; color: #0d47a1; }
+        .alert-warning { background: #fff3e0; border-left: 5px solid #f57c00; color: #e65100; }
+        .alert-success { background: #e8f5e9; border-left: 5px solid #388e3c; color: #1b5e20; }
+
+        .chart-container {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f8f9ff;
+            border-radius: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
-
     <div id="loginScreen" class="login-container">
         <div class="login-box">
             <h1>🎯 RMS</h1>
             <p>Recruitment Management System</p>
-            <form onsubmit="login(event)">
+            <form id="loginForm" onsubmit="login(event)">
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" id="loginEmail" required placeholder="admin@company.com">
+                    <input type="email" id="loginEmail" required>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
@@ -79,30 +409,31 @@
                 </div>
                 <button type="submit" class="btn">Login</button>
             </form>
-            <div style="margin-top:20px; font-size: 0.8em; color: #666;">
-                Click to fill: 
-                <span onclick="document.getElementById('loginEmail').value='admin@company.com'" style="cursor:pointer; color:blue">Admin</span> | 
-                <span onclick="document.getElementById('loginEmail').value='recruiter1@company.com'" style="cursor:pointer; color:blue">Recruiter</span>
+            <div class="demo-accounts">
+                <h4>📝 Demo Accounts:</h4>
+                <p><strong onclick="fillLogin('admin@company.com')" style="cursor:pointer;color:#667eea">👑 Admin:</strong> admin@company.com</p>
+                <p><strong onclick="fillLogin('recruiter1@company.com')" style="cursor:pointer;color:#667eea">👔 Recruiter:</strong> recruiter1@company.com</p>
+                <p><strong onclick="fillLogin('ayaan@gmail.com')" style="cursor:pointer;color:#667eea">👤 Candidate:</strong> ayaan@gmail.com</p>
             </div>
         </div>
     </div>
 
     <div id="adminDashboard" class="dashboard container">
         <div class="dashboard-header">
-            <div><h1>Admin Control</h1></div>
+            <div><h1>Admin Dashboard</h1></div>
             <div class="user-info">
                 <span class="role-badge role-admin">ADMIN</span>
                 <h3 id="adminName"></h3>
-                <button class="btn btn-small btn-secondary" onclick="logout()">Logout</button>
+                <button class="btn btn-small" onclick="logout()">Logout</button>
             </div>
         </div>
-        <div class="menu-grid">
-            <div class="menu-card" onclick="showAdminPanel('analytics')"><h3>📊 Analytics</h3><p>Bias, Skills & Performance</p></div>
-            <div class="menu-card" onclick="showAdminPanel('users')"><h3>👥 Users</h3><p>Access Control</p></div>
-            <div class="menu-card" onclick="showAdminPanel('audit')"><h3>🔒 Audit</h3><p>Security Trails</p></div>
-            <div class="menu-card" onclick="showAdminPanel('alldata')"><h3>🗂️ Database</h3><p>Raw Data View</p></div>
+        <div id="adminMenu" class="menu-grid">
+            <div class="menu-card" onclick="showAdminPanel('analytics')"><h3>📊 Analytics</h3><p>Metrics & stats</p></div>
+            <div class="menu-card" onclick="showAdminPanel('users')"><h3>👥 Users</h3><p>Manage accounts</p></div>
+            <div class="menu-card" onclick="showAdminPanel('audit')"><h3>🔒 Audit Logs</h3><p>System trails</p></div>
+            <div class="menu-card" onclick="showAdminPanel('alldata')"><h3>🗂️ All Data</h3><p>Jobs & Apps</p></div>
         </div>
-        <div id="adminContent" class="content-panel" style="display:none"></div>
+        <div id="adminContent"></div>
     </div>
 
     <div id="recruiterDashboard" class="dashboard container">
@@ -111,12 +442,33 @@
             <div class="user-info">
                 <span class="role-badge role-recruiter">RECRUITER</span>
                 <h3 id="recruiterName"></h3>
-                <button class="btn btn-small btn-secondary" onclick="logout()">Logout</button>
+                <button class="btn btn-small" onclick="logout()">Logout</button>
             </div>
         </div>
-        <div id="recruiterContent" class="content-panel">
-            <p>Welcome. Select a function from the grid above.</p>
+        <div id="recruiterMenu" class="menu-grid">
+            <div class="menu-card" onclick="showRecruiterPanel('viewapps')"><h3>📋 Applications</h3><p>Review all</p></div>
+            <div class="menu-card" onclick="showRecruiterPanel('candidates')"><h3>🎯 Rankings</h3><p>Match scores</p></div>
+            <div class="menu-card" onclick="showRecruiterPanel('schedule')"><h3>📅 Interviews</h3><p>Schedule</p></div>
+            <div class="menu-card" onclick="showRecruiterPanel('hire')"><h3>✅ Hiring</h3><p>Finalize hire</p></div>
         </div>
+        <div id="recruiterContent"></div>
+    </div>
+
+    <div id="candidateDashboard" class="dashboard container">
+        <div class="dashboard-header">
+            <div><h1>Candidate Dashboard</h1></div>
+            <div class="user-info">
+                <span class="role-badge role-candidate">CANDIDATE</span>
+                <h3 id="candidateName"></h3>
+                <button class="btn btn-small" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        <div id="candidateMenu" class="menu-grid">
+            <div class="menu-card" onclick="showCandidatePanel('browse')"><h3>🔍 Browse</h3><p>Find jobs</p></div>
+            <div class="menu-card" onclick="showCandidatePanel('myapps')"><h3>📝 My Apps</h3><p>Track status</p></div>
+            <div class="menu-card" onclick="showCandidatePanel('profile')"><h3>👤 Profile</h3><p>Skills & Experience</p></div>
+        </div>
+        <div id="candidateContent"></div>
     </div>
 
     <script>
@@ -124,155 +476,83 @@
         let currentUser = null;
 
         async function initDB() {
-            const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` });
-            const response = await fetch('recruitment.db');
-            const buffer = await response.arrayBuffer();
-            db = new SQL.Database(new Uint8Array(buffer));
-            console.log("Database Synced with Showcase Schema");
-        }
-
-        function query(sql) {
             try {
-                const res = db.exec(sql);
-                return res[0] || { columns: [], values: [] };
-            } catch (e) { return { columns: [], values: [] }; }
-        }
-
-        function login(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            // Matches your 'Users' and 'Roles' tables
-            const res = query(`SELECT u.UserID, u.Username, u.RoleID, r.RoleName FROM Users u JOIN Roles r ON u.RoleID = r.RoleID WHERE u.Email = '${email}'`);
-            
-            if (res.values.length) {
-                const data = res.values[0];
-                currentUser = { id: data[0], name: data[1], roleID: data[2], roleName: data[3] };
-                
-                // Route based on your Role IDs (1: Admin, 2: Recruiter, 3: Candidate)
-                document.getElementById('loginScreen').style.display = 'none';
-                if (currentUser.roleID === 1) showAdminDashboard();
-                else if (currentUser.roleID === 2) showRecruiterDashboard();
-                else showCandidateDashboard();
-            } else {
-                alert("User not found in recruitment.db");
+                const SQL = await initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                });
+                const response = await fetch('recruitment.db');
+                if (!response.ok) throw new Error('Database file missing');
+                const buffer = await response.arrayBuffer();
+                db = new SQL.Database(new Uint8Array(buffer));
+                console.log('DB Ready');
+            } catch (error) {
+                console.error(error);
+                alert('Database Error. Ensure recruitment.db is in the same folder.');
             }
         }
 
-        // --- ADMIN ANALYTICS (Using your Views) ---
-        function showSystemAnalytics(container) {
-            container.innerHTML = '<h2>📊 Advanced DBMS Analytics</h2>';
+        function query(sql, params = []) {
+            try {
+                const result = db.exec(sql, params);
+                return result[0] || { columns: [], values: [] };
+            } catch (e) { return { columns: [], values: [] }; }
+        }
+
+        function fillLogin(email) {
+            document.getElementById('loginEmail').value = email;
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const res = query(`SELECT u.UserID, u.Username, u.RoleID, r.RoleName, c.CandidateID, c.FullName FROM Users u JOIN Roles r ON u.RoleID = r.RoleID LEFT JOIN Candidates c ON u.UserID = c.UserID WHERE u.Email = '${email}'`);
             
-            // 1. Funnel Analysis (Using vw_ApplicationFunnel)
-            const funnel = query("SELECT * FROM vw_ApplicationFunnel");
-            let funnelHtml = '<h3>📈 Application Funnel</h3><div class="stats-grid">';
-            funnel.values.forEach(r => {
-                funnelHtml += `<div class="stat-card"><h3>${r[1]}</h3><p>${r[0]}</p></div>`;
-            });
-            container.innerHTML += funnelHtml + '</div>';
+            if (!res.values.length) return alert('User not found');
+            const data = res.values[0];
+            currentUser = { userID: data[0], username: data[1], roleID: data[2], roleName: data[3], candidateID: data[4], candidateName: data[5] };
 
-            // 2. Bias Detection (Using vw_Bias_Location)
-            const bias = query("SELECT * FROM vw_Bias_Location");
-            let biasHtml = '<h3>🌍 Location Hire-Rate (Bias Detection)</h3><table><tr><th>Location</th><th>Applicants</th><th>Hire Rate</th></tr>';
-            bias.values.forEach(r => {
-                biasHtml += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[3].toFixed(1)}%</td></tr>`;
-            });
-            container.innerHTML += biasHtml + '</table>';
+            document.getElementById('loginScreen').style.display = 'none';
+            if (currentUser.roleID === 1) showAdminDashboard();
+            else if (currentUser.roleID === 2) showRecruiterDashboard();
+            else showCandidateDashboard();
         }
 
-        // --- RECRUITER RANKINGS (Using your Match Score View) ---
-        function showCandidateRankings(container) {
-            const rankings = query("SELECT * FROM vw_CandidateMatchScore ORDER BY TotalMatchScore DESC");
-            let html = '<h2>🎯 AI-Based Candidate Match</h2>';
-            rankings.values.forEach(r => {
-                // Calculation: TotalMatchScore / Max Possible (approx 100)
-                const score = r[7]; 
-                html += `
-                    <div class="application-card">
-                        <h3>${r[1]} <small>for ${r[3]}</small></h3>
-                        <p>Skill Score: ${r[4]} | Experience Score: ${r[5]} | Location Bonus: ${r[6]}</p>
-                        <div class="progress-bar"><div class="progress-fill" style="width:${score}%"></div></div>
-                        <strong>Total Match: ${score} points</strong>
-                    </div>`;
-            });
-            container.innerHTML = html;
-        }
         function logout() { location.reload(); }
+
+        /* Admin Panels */
+        function showAdminDashboard() {
+            document.getElementById('adminName').textContent = currentUser.username;
+            document.getElementById('adminDashboard').classList.add('active');
+        }
 
         function showAdminPanel(panel) {
             const container = document.getElementById('adminContent');
-            container.style.display = 'block';
-            container.innerHTML = '<button class="btn btn-small btn-secondary" onclick="this.parentElement.style.display=\'none\'">× Close</button>';
-            
-            if (panel === 'analytics') renderAdvancedAnalytics(container);
-            if (panel === 'users') showAllUsers(container);
-            if (panel === 'audit') showAuditLogs(container);
-            if (panel === 'alldata') showAllData(container);
+            container.innerHTML = '<button class="btn btn-secondary back-btn" onclick="this.parentElement.innerHTML=\'\'">← Back</button><div id="panelData"></div>';
+            const dataDiv = document.getElementById('panelData');
+            if (panel === 'analytics') showSystemAnalytics(dataDiv);
+            if (panel === 'users') showAllUsers(dataDiv);
+            if (panel === 'audit') showAuditLogs(dataDiv);
+            if (panel === 'alldata') showAllData(dataDiv);
         }
 
-        // --- THE ADVANCED ANALYTICS LOGIC ---
-        function renderAdvancedAnalytics(container) {
-            let html = '<h2>📊 Deep System Analytics</h2>';
-            
-            // 1. Bias Detection
-            const biasLoc = query("SELECT Location, COUNT(*) as Total, SUM(CASE WHEN StatusID=4 THEN 1 ELSE 0 END) * 100.0 / COUNT(*) FROM Candidates GROUP BY Location");
-            html += '### 🌍 Hiring Bias Analysis (Location)';
-            html += '<table><tr><th>Location</th><th>Pool Size</th><th>Hiring Rate</th></tr>';
-            biasLoc.values.forEach(row => {
-                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${parseFloat(row[2]).toFixed(1)}%</td></tr>`;
-            });
-            html += '</table>';
-
-            // 2. Skill Gap Analysis
-            const skillGap = query(`
-                SELECT j.JobTitle, js.SkillName, COUNT(cs.CandidateID) as QualifiedCandidates
-                FROM JobPostings j
-                JOIN JobSkills js ON j.JobID = js.JobID
-                LEFT JOIN CandidateSkills cs ON js.SkillName = cs.SkillName
-                GROUP BY j.JobID, js.SkillName
-            `);
-            html += '<h3 style="margin-top:30px">🔍 Skill Gap Analysis</h3><table><tr><th>Job Title</th><th>Required Skill</th><th>Available Candidates</th></tr>';
-            skillGap.values.forEach(row => {
-                const alertClass = row[2] < 2 ? 'style="color:red; font-weight:bold"' : '';
-                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td ${alertClass}>${row[2]}</td></tr>`;
-            });
-            html += '</table>';
-
-            // 3. Interviewer Performance
-            const intPerf = query(`
-                SELECT InterviewerName, AVG(Score) as AvgScore, COUNT(*) as TotalInterviews
-                FROM Interviews GROUP BY InterviewerName
-            `);
-            html += '<h3 style="margin-top:30px">👨‍🏫 Interviewer Consistency</h3><table><tr><th>Interviewer</th><th>Avg Score Given</th><th>Total Conducted</th></tr>';
-            intPerf.values.forEach(row => {
-                html += `<tr><td>${row[0]}</td><td>${parseFloat(row[1]).toFixed(1)}/100</td><td>${row[2]}</td></tr>`;
-            });
-            html += '</table>';
-
-            // 4. Engagement & Vacancy
-            const engagement = query("SELECT 'Global', COUNT(*), SUM(CASE WHEN StatusID=4 THEN 1 ELSE 0 END) FROM Applications");
-            const v = engagement.values[0];
-            html += `<div class="alert alert-info">Global Hire Rate: ${((v[2]/v[1])*100).toFixed(1)}% across ${v[1]} applications.</div>`;
-
-            container.innerHTML += html;
+        function showSystemAnalytics(container) {
+            const stats = query("SELECT (SELECT COUNT(*) FROM Candidates), (SELECT COUNT(*) FROM JobPostings), (SELECT COUNT(*) FROM Applications)");
+            const v = stats.values[0];
+            container.innerHTML = `<h2>📊 Analytics</h2><div class="stats-grid"><div class="stat-card"><h3>${v[0]}</h3><p>Candidates</p></div><div class="stat-card"><h3>${v[1]}</h3><p>Jobs</p></div><div class="stat-card"><h3>${v[2]}</h3><p>Apps</p></div></div>`;
         }
 
         function showAllUsers(container) {
-            const users = query("SELECT u.UserID, u.Username, u.Email, r.RoleName, u.IsActive FROM Users u JOIN Roles r ON u.RoleID = r.RoleID");
-            let html = '<h2>👥 User Management</h2><table><tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th></tr>';
-            users.values.forEach(row => {
-                const status = row[4] ? '<span class="badge badge-hired">Active</span>' : '<span class="badge badge-rejected">Inactive</span>';
-                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${status}</td></tr>`;
-            });
-            container.innerHTML += html + '</table>';
+            const users = query("SELECT UserID, Username, Email FROM Users");
+            let html = '<h2>👥 Users</h2><table><tr><th>ID</th><th>Name</th><th>Email</th></tr>';
+            users.values.forEach(r => html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`);
+            container.innerHTML = html + '</table>';
         }
 
         function showAuditLogs(container) {
-            const logs = query("SELECT TableName, RecordID, Operation, ChangedBy, ChangedAt FROM AuditLog ORDER BY ChangedAt DESC LIMIT 20");
-            let html = '<h2>🔒 Security Audit Logs</h2><table><tr><th>Table</th><th>ID</th><th>Action</th><th>User</th><th>Timestamp</th></tr>';
-            logs.values.forEach(row => {
-                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td></tr>`;
-            });
-            container.innerHTML += html + '</table>';
+            const logs = query("SELECT TableName, Operation, ChangedAt FROM AuditLog LIMIT 10");
+            let html = '<h2>🔒 Logs</h2><table><tr><th>Table</th><th>Op</th><th>Date</th></tr>';
+            logs.values.forEach(r => html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`);
+            container.innerHTML = html + '</table>';
         }
 
         function showAllData(container) {
@@ -282,7 +562,96 @@
                 const status = row[4] ? '<span class="badge badge-hired">Active</span>' : '<span class="badge badge-rejected">Inactive</span>';
                 html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${status}</td></tr>`;
             });
-            container.innerHTML += html + '</table>';
+            container.innerHTML = html + '</table>';
+        }
+
+        /* Recruiter Panels */
+        function showRecruiterDashboard() {
+            document.getElementById('recruiterName').textContent = currentUser.username;
+            document.getElementById('recruiterDashboard').classList.add('active');
+        }
+
+        function showRecruiterPanel(panel) {
+            const container = document.getElementById('recruiterContent');
+            container.innerHTML = '<button class="btn btn-secondary back-btn" onclick="this.parentElement.innerHTML=\'\'">← Back</button><div id="panelData"></div>';
+            const dataDiv = document.getElementById('panelData');
+            if (panel === 'viewapps') showAllApplications(dataDiv);
+            if (panel === 'candidates') showCandidateRankings(dataDiv);
+            if (panel === 'schedule') showScheduleInterview(dataDiv);
+            if (panel === 'hire') showHireCandidates(dataDiv);
+        }
+
+        function showAllApplications(container) {
+            const apps = query("SELECT a.ApplicationID, c.FullName, j.JobTitle, s.StatusName FROM Applications a JOIN Candidates c ON a.CandidateID = c.CandidateID JOIN JobPostings j ON a.JobID = j.JobID JOIN ApplicationStatus s ON a.StatusID = s.StatusID");
+            let html = '<h2>📋 Applications</h2><table><tr><th>ID</th><th>Name</th><th>Job</th><th>Status</th></tr>';
+            apps.values.forEach(r => html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${getStatusBadge(r[3])}</td></tr>`);
+            container.innerHTML = html + '</table>';
+        }
+
+        function showCandidateRankings(container) {
+            const rankings = query("SELECT * FROM vw_CandidateMatchScore ORDER BY TotalMatchScore DESC");
+            let html = '<h2>🎯 Candidate Rankings</h2>';
+            rankings.values.forEach(row => {
+                html += `<div class="application-card"><h3>${row[1]}</h3><p>Job: ${row[3]} | Score: ${row[7]}</p><div class="progress-bar"><div class="progress-fill" style="width:${row[7]}%"></div></div></div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function showScheduleInterview(container) {
+            container.innerHTML = '<h2>📅 Scheduling</h2><p>Select a candidate from the applications list to set an interview date.</p>';
+        }
+
+        function showHireCandidates(container) {
+            const apps = query("SELECT a.ApplicationID, c.FullName, j.JobTitle FROM Applications a JOIN Candidates c ON a.CandidateID = c.CandidateID JOIN JobPostings j ON a.JobID = j.JobID WHERE a.StatusID = 3");
+            let html = '<h2>✅ Hire Candidates</h2>';
+            if (!apps.values.length) html += '<p>No candidates ready for hire.</p>';
+            else {
+                html += '<table><tr><th>Name</th><th>Job</th><th>Action</th></tr>';
+                apps.values.forEach(r => html += `<tr><td>${r[1]}</td><td>${r[2]}</td><td><button class="btn btn-small" onclick="alert('Hired!')">Confirm Hire</button></td></tr>`);
+                html += '</table>';
+            }
+            container.innerHTML = html;
+        }
+
+        /* Candidate Panels */
+        function showCandidateDashboard() {
+            document.getElementById('candidateName').textContent = currentUser.candidateName || currentUser.username;
+            document.getElementById('candidateDashboard').classList.add('active');
+        }
+
+        function showCandidatePanel(panel) {
+            const container = document.getElementById('candidateContent');
+            container.innerHTML = '<button class="btn btn-secondary back-btn" onclick="this.parentElement.innerHTML=\'\'">← Back</button><div id="panelData"></div>';
+            const dataDiv = document.getElementById('panelData');
+            if (panel === 'browse') showBrowseJobs(dataDiv);
+            if (panel === 'myapps') showMyApplications(dataDiv);
+            if (panel === 'profile') showMyProfile(dataDiv);
+        }
+
+        function showBrowseJobs(container) {
+            const jobs = query("SELECT JobID, JobTitle, Location, Vacancies FROM JobPostings WHERE IsActive = 1");
+            let html = '<h2>🔍 Available Jobs</h2>';
+            jobs.values.forEach(r => html += `<div class="application-card"><h3>${r[1]}</h3><p>${r[2]} | Vacancies: ${r[3]}</p><button class="btn btn-small" onclick="alert('Applied!')">Apply</button></div>`);
+            container.innerHTML = html;
+        }
+
+        function showMyApplications(container) {
+            const apps = query(`SELECT j.JobTitle, s.StatusName, a.AppliedDate FROM Applications a JOIN JobPostings j ON a.JobID = j.JobID JOIN ApplicationStatus s ON a.StatusID = s.StatusID WHERE a.CandidateID = ${currentUser.candidateID}`);
+            let html = '<h2>📝 My Applications</h2>';
+            if (!apps.values.length) html += '<p>No applications yet.</p>';
+            apps.values.forEach(r => html += `<div class="application-card"><h3>${r[0]}</h3><p>Status: ${getStatusBadge(r[1])} | Date: ${r[2]}</p></div>`);
+            container.innerHTML = html;
+        }
+
+        function showMyProfile(container) {
+            const prof = query(`SELECT FullName, Location, YearsOfExperience FROM Candidates WHERE CandidateID = ${currentUser.candidateID}`);
+            const d = prof.values[0];
+            container.innerHTML = `<h2>👤 Profile</h2><div class="application-card"><h3>${d[0]}</h3><p>Location: ${d[1]}</p><p>Exp: ${d[2]} years</p></div>`;
+        }
+
+        function getStatusBadge(status) {
+            const badges = { 'Applied': 'badge-applied', 'Screening': 'badge-screening', 'Interview': 'badge-interview', 'Hired': 'badge-hired', 'Rejected': 'badge-rejected' };
+            return `<span class="badge ${badges[status] || ''}">${status}</span>`;
         }
 
         window.onload = initDB;
