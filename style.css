@@ -1,0 +1,17 @@
+:root {
+    --admin-color: #ff6b6b;
+    --recruiter-color: #4dabf7;
+    --candidate-color: #51cf66;
+}
+
+body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+
+.auth-wrapper { height: 100vh; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+.auth-card { width: 100%; max-width: 400px; border: none; border-radius: 15px; }
+
+.sidebar { height: 100vh; min-height: 100vh; }
+.nav-link { color: #adb5bd; transition: 0.3s; }
+.nav-link:hover, .nav-link.active { color: #fff; background: rgba(255,255,255,0.1); border-radius: 5px; }
+
+.card-stat { border-left: 4px solid var(--recruiter-color); }
+.match-score-badge { font-weight: bold; font-size: 1.1rem; color: #1971c2; }
