@@ -3,51 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recruitment Management System - Project Showcase</title>
+    <title>Enterprise RMS | Recruitment Management System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
     <style>
-        /* Restoring your original CSS for the perfect look */
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 6px;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .login-box { background: white; padding: 50px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 100%; animation: slideUp 0.5s; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .login-box h1 { color: #667eea; margin-bottom: 10px; font-size: 2.5em; text-align: center; }
+
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+        /* --- Login Styling --- */
+        .login-container { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            background: #ffffff;
+            border-top: 4px solid var(--primary);
+        }
+
+        .login-box { 
+            background: white; 
+            padding: 40px; 
+            max-width: 400px; 
+            width: 100%; 
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .login-box h1 { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            letter-spacing: -0.025em;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .login-box p { color: var(--text-muted); margin-bottom: 32px; font-size: 0.95rem; }
+
+        /* --- UI Components --- */
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; }
-        .form-group input { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; }
-        .btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 600; color: var(--text-main); }
+        .form-group input { 
+            width: 100%; 
+            padding: 10px 12px; 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus { outline: none; border-color: var(--primary); ring: 2px solid #bfdbfe; }
+
+        .btn { 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: var(--radius); 
+            font-size: 0.95rem; 
+            font-weight: 500; 
+            cursor: pointer; 
+            transition: background 0.2s;
+            width: 100%;
+        }
+        .btn:hover { background: var(--primary-hover); }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: auto;
+            font-size: 0.85rem;
+        }
+        .btn-outline:hover { background: #f1f5f9; }
+
+        /* --- Dashboard Layout --- */
         .dashboard { display: none; }
-        .dashboard.active { display: block; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .dashboard-header { background: white; padding: 30px; border-radius: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
-        .role-badge { display: inline-block; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; }
-        .role-admin { background: #ff6b6b; color: white; }
-        .role-recruiter { background: #4dabf7; color: white; }
-        .role-candidate { background: #51cf66; color: white; }
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .menu-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); cursor: pointer; border-left: 5px solid #667eea; }
-        .content-panel { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table th { background: #667eea; color: white; padding: 15px; text-align: left; }
-        table td { padding: 15px; border-bottom: 1px solid #e0e0e0; }
-        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 15px; color: white; text-align: center; }
-        .application-card { background: #f8f9ff; padding: 25px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid #667eea; }
-        .progress-bar { background: #e0e0e0; height: 12px; border-radius: 10px; overflow: hidden; margin: 15px 0; }
-        .progress-fill { background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; transition: width 0.5s; }
-        .demo-accounts { margin-top: 20px; font-size: 0.9em; background: #f4f4f4; padding: 10px; border-radius: 8px; }
+        .dashboard.active { display: block; }
+
+        .dashboard-header { 
+            background: white; 
+            padding: 20px 0; 
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info { display: flex; align-items: center; gap: 15px; }
+
+        /* --- Badges --- */
+        .role-badge { 
+            padding: 4px 12px; 
+            border-radius: 99px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .role-admin { background: #fee2e2; color: #991b1b; }
+        .role-recruiter { background: #dbeafe; color: #1e40af; }
+        .role-candidate { background: #dcfce7; color: #166534; }
+
+        /* --- Grid & Cards --- */
+        .menu-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 24px; 
+            margin-bottom: 40px; 
+        }
+
+        .menu-card { 
+            background: white; 
+            padding: 24px; 
+            border-radius: var(--radius); 
+            border: 1px solid var(--border);
+            cursor: pointer; 
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .menu-card:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+        .menu-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+        .menu-card p { color: var(--text-muted); font-size: 0.875rem; }
+
+        .content-panel { 
+            background: white; 
+            padding: 32px; 
+            border-radius: var(--radius); 
+            border: 1px solid var(--border);
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        /* --- Tables --- */
+        table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+        table th { 
+            background: #f8fafc; 
+            color: var(--text-muted); 
+            padding: 12px 16px; 
+            text-align: left; 
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border);
+        }
+        table td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+
+        /* --- Stats & Progress --- */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; }
+        .stat-card { 
+            background: #f1f5f9; 
+            padding: 20px; 
+            border-radius: var(--radius); 
+            color: var(--text-main); 
+            text-align: left;
+            border-left: 4px solid var(--primary);
+        }
+        .stat-card h3 { font-size: 1.5rem; margin-top: 4px; }
+
+        .application-card { 
+            padding: 20px; 
+            border: 1px solid var(--border);
+            border-radius: var(--radius); 
+            margin-bottom: 16px; 
+        }
+
+        .progress-bar { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; margin: 12px 0; }
+        .progress-fill { background: var(--primary); height: 100%; }
+
+        .demo-accounts { margin-top: 32px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
     <div id="loginScreen" class="login-container">
         <div class="login-box">
-            <h1>🎯 RMS</h1>
-            <p>Recruitment Management System</p>
+            <h1><span style="color:var(--primary)">■</span> RMS Enterprise</h1>
+            <p>Sign in to your recruitment portal</p>
             <form onsubmit="login(event)">
                 <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" required>
+                    <label>Corporate Email</label>
+                    <input type="email" id="loginEmail" placeholder="name@company.com" required>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
@@ -56,7 +222,7 @@
                 <button type="submit" class="btn">Sign In</button>
             </form>
             <div class="demo-accounts">
-                <strong>Demo Logins:</strong><br>
+                <strong>System Demo Credentials:</strong><br>
                 Admin: admin@company.com<br>
                 Recruiter: recruiter1@company.com<br>
                 Candidate: ayaan@gmail.com
@@ -64,53 +230,78 @@
         </div>
     </div>
 
-    <div id="adminDashboard" class="dashboard container">
-        <div class="dashboard-header">
-            <div><h1>Admin Dashboard</h1></div>
-            <div class="user-info">
-                <span class="role-badge role-admin">ADMIN</span>
-                <h3 id="adminName"></h3>
-                <button class="btn" style="width: auto; padding: 5px 15px;" onclick="location.reload()">Logout</button>
+    <div id="adminDashboard" class="dashboard">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>Admin Console</h1>
+                <div class="user-info">
+                    <span class="role-badge role-admin">System Admin</span>
+                    <strong id="adminName"></strong>
+                    <button class="btn btn-outline" onclick="location.reload()">Logout</button>
+                </div>
             </div>
+        </header>
+        <div class="container">
+            <div class="menu-grid">
+                <div class="menu-card" onclick="showAdminPanel('analytics')">
+                    <h3>Analytics</h3>
+                    <p>Real-time hiring pipeline metrics</p>
+                </div>
+                <div class="menu-card" onclick="showAdminPanel('audit')">
+                    <h3>Security Audit</h3>
+                    <p>Access logs and system changes</p>
+                </div>
+            </div>
+            <div id="adminContent" class="content-panel" style="display:none"></div>
         </div>
-        <div class="menu-grid">
-            <div class="menu-card" onclick="showAdminPanel('analytics')"><h3>📊 Analytics</h3><p>Hiring pipeline</p></div>
-            <div class="menu-card" onclick="showAdminPanel('audit')"><h3>🔒 Audit Logs</h3><p>System tracking</p></div>
-        </div>
-        <div id="adminContent" class="content-panel" style="display:none"></div>
     </div>
 
-    <div id="recruiterDashboard" class="dashboard container">
-        <div class="dashboard-header">
-            <div><h1>Recruiter Dashboard</h1></div>
-            <div class="user-info">
-                <span class="role-badge role-recruiter">RECRUITER</span>
-                <h3 id="recruiterName"></h3>
-                <button class="btn" style="width: auto; padding: 5px 15px;" onclick="location.reload()">Logout</button>
+    <div id="recruiterDashboard" class="dashboard">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>Recruiter Portal</h1>
+                <div class="user-info">
+                    <span class="role-badge role-recruiter">Talent Acquisition</span>
+                    <strong id="recruiterName"></strong>
+                    <button class="btn btn-outline" onclick="location.reload()">Logout</button>
+                </div>
             </div>
+        </header>
+        <div class="container">
+            <div class="menu-grid">
+                <div class="menu-card" onclick="showRecruiterPanel('rankings')">
+                    <h3>Candidate Match</h3>
+                    <p>AI-driven profile rankings</p>
+                </div>
+            </div>
+            <div id="recruiterContent" class="content-panel" style="display:none"></div>
         </div>
-        <div class="menu-grid">
-            <div class="menu-card" onclick="showRecruiterPanel('rankings')"><h3>🎯 Match Score</h3><p>Candidate rankings</p></div>
-        </div>
-        <div id="recruiterContent" class="content-panel" style="display:none"></div>
     </div>
 
-    <div id="candidateDashboard" class="dashboard container">
-        <div class="dashboard-header">
-            <div><h1>Candidate Dashboard</h1></div>
-            <div class="user-info">
-                <span class="role-badge role-candidate">CANDIDATE</span>
-                <h3 id="candidateName"></h3>
-                <button class="btn" style="width: auto; padding: 5px 15px;" onclick="location.reload()">Logout</button>
+    <div id="candidateDashboard" class="dashboard">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>Careers Home</h1>
+                <div class="user-info">
+                    <span class="role-badge role-candidate">Candidate</span>
+                    <strong id="candidateName"></strong>
+                    <button class="btn btn-outline" onclick="location.reload()">Logout</button>
+                </div>
             </div>
+        </header>
+        <div class="container">
+            <div class="menu-grid">
+                <div class="menu-card" onclick="showCandidatePanel('jobs')">
+                    <h3>Open Positions</h3>
+                    <p>Explore your next career move</p>
+                </div>
+            </div>
+            <div id="candidateContent" class="content-panel" style="display:none"></div>
         </div>
-        <div class="menu-grid">
-            <div class="menu-card" onclick="showCandidatePanel('jobs')"><h3>🔍 Browse Jobs</h3><p>Find openings</p></div>
-        </div>
-        <div id="candidateContent" class="content-panel" style="display:none"></div>
     </div>
 
     <script>
+        // LOGIC REMAINS IDENTICAL TO ORIGINAL TO ENSURE FUNCTIONALITY
         let db;
         let currentUser = null;
 
@@ -164,14 +355,14 @@
             container.style.display = 'block';
             if (type === 'analytics') {
                 const res = query("SELECT * FROM vw_ApplicationFunnel");
-                let html = '<h2>📈 Application Funnel</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
-                res.values.forEach(v => html += `<div class="stat-card"><h3>${v[1]}</h3><p>${v[0]}</p></div>`);
+                let html = '<h2>Application Pipeline</h2><div class="stat-grid">';
+                res.values.forEach(v => html += `<div class="stat-card"><p>${v[0]}</p><h3>${v[1]}</h3></div>`);
                 container.innerHTML = html + '</div>';
             } else if (type === 'audit') {
                 const res = query("SELECT TableName, Operation, ChangedBy, ChangedAt FROM AuditLog LIMIT 10");
-                let html = '<h2>🔒 Audit Trail</h2><table><tr><th>Table</th><th>Op</th><th>Time</th></tr>';
-                res.values.forEach(v => html += `<tr><td>${v[0]}</td><td>${v[1]}</td><td>${v[3]}</td></tr>`);
-                container.innerHTML = html + '</table>';
+                let html = '<h2>Recent Audit Events</h2><table><thead><tr><th>Resource</th><th>Action</th><th>Timestamp</th></tr></thead><tbody>';
+                res.values.forEach(v => html += `<tr><td>${v[0]}</td><td><strong>${v[1]}</strong></td><td>${v[3]}</td></tr>`);
+                container.innerHTML = html + '</tbody></table>';
             }
         }
 
@@ -179,12 +370,17 @@
             const container = document.getElementById('recruiterContent');
             container.style.display = 'block';
             const res = query("SELECT FullName, JobTitle, TotalMatchScore FROM vw_CandidateMatchScore ORDER BY TotalMatchScore DESC");
-            let html = '<h2>🎯 Top Candidates</h2>';
+            let html = '<h2>Top Qualified Matches</h2>';
             res.values.forEach(v => html += `
                 <div class="application-card">
-                    <h3>${v[0]} - ${v[1]}</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start">
+                        <div>
+                            <h3 style="margin:0">${v[0]}</h3>
+                            <p style="color:var(--text-muted); font-size:0.85rem">${v[1]}</p>
+                        </div>
+                        <span style="font-weight:700; color:var(--primary)">${v[2]}% Match</span>
+                    </div>
                     <div class="progress-bar"><div class="progress-fill" style="width:${v[2]}%"></div></div>
-                    <strong>Score: ${v[2]}%</strong>
                 </div>`);
             container.innerHTML = html;
         }
@@ -193,8 +389,13 @@
             const container = document.getElementById('candidateContent');
             container.style.display = 'block';
             const res = query("SELECT JobTitle, Location FROM JobPostings WHERE IsActive = 1");
-            let html = '<h2>🔍 Openings</h2>';
-            res.values.forEach(v => html += `<div class="application-card"><h3>${v[0]}</h3><p>${v[1]}</p></div>`);
+            let html = '<h2>Available Opportunities</h2>';
+            res.values.forEach(v => html += `
+                <div class="application-card">
+                    <h3 style="margin:0">${v[0]}</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem">${v[1]}</p>
+                    <button class="btn btn-outline" style="margin-top:12px">View Details</button>
+                </div>`);
             container.innerHTML = html;
         }
 
