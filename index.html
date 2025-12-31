@@ -328,7 +328,6 @@
         .badge-interview { background: #f3e5f5; color: #7b1fa2; }
         .badge-hired { background: #e8f5e9; color: #388e3c; }
         .badge-rejected { background: #ffebee; color: #c62828; }
-        .badge-warning { background: #fffde7; color: #fbc02d; }
 
         .score-display {
             font-size: 2.5em;
@@ -358,9 +357,23 @@
             margin: 20px 0;
         }
 
-        .alert-info { background: #e3f2fd; border-left: 5px solid #1976d2; color: #0d47a1; }
-        .alert-warning { background: #fff3e0; border-left: 5px solid #f57c00; color: #e65100; }
-        .alert-success { background: #e8f5e9; border-left: 5px solid #388e3c; color: #1b5e20; }
+        .alert-info {
+            background: #e3f2fd;
+            border-left: 5px solid #1976d2;
+            color: #0d47a1;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            border-left: 5px solid #f57c00;
+            color: #e65100;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            border-left: 5px solid #388e3c;
+            color: #1b5e20;
+        }
 
         .chart-container {
             margin: 30px 0;
@@ -368,6 +381,15 @@
             background: #f8f9ff;
             border-radius: 15px;
         }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hidden { display: none !important; }
 
         .modal {
             display: none;
@@ -382,6 +404,11 @@
             justify-content: center;
         }
 
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
         .modal-content {
             background: white;
             padding: 40px;
@@ -391,13 +418,41 @@
             max-height: 90vh;
             overflow-y: auto;
         }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Login Screen -->
     <div id="loginScreen" class="login-container">
         <div class="login-box">
             <h1>🎯 RMS</h1>
             <p>Recruitment Management System</p>
+            
             <form id="loginForm" onsubmit="login(event)">
                 <div class="form-group">
                     <label>Email</label>
@@ -409,85 +464,170 @@
                 </div>
                 <button type="submit" class="btn">Login</button>
             </form>
+
             <div class="demo-accounts">
-                <h4>📝 Demo Accounts:</h4>
+                <h4>📝 Demo Accounts (Click to auto-fill):</h4>
                 <p><strong onclick="fillLogin('admin@company.com')" style="cursor:pointer;color:#667eea">👑 Admin:</strong> admin@company.com</p>
                 <p><strong onclick="fillLogin('recruiter1@company.com')" style="cursor:pointer;color:#667eea">👔 Recruiter:</strong> recruiter1@company.com</p>
                 <p><strong onclick="fillLogin('ayaan@gmail.com')" style="cursor:pointer;color:#667eea">👤 Candidate:</strong> ayaan@gmail.com</p>
+                <p style="margin-top:10px;"><em>Password: demo123 (for all)</em></p>
             </div>
         </div>
     </div>
 
+    <!-- Admin Dashboard -->
     <div id="adminDashboard" class="dashboard container">
         <div class="dashboard-header">
-            <div><h1>Admin Dashboard</h1></div>
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p>Complete System Control</p>
+            </div>
             <div class="user-info">
                 <span class="role-badge role-admin">ADMIN</span>
                 <h3 id="adminName"></h3>
                 <button class="btn btn-small" onclick="logout()">Logout</button>
             </div>
         </div>
+
         <div id="adminMenu" class="menu-grid">
-            <div class="menu-card" onclick="showAdminPanel('analytics')"><h3>📊 Analytics</h3><p>Metrics & stats</p></div>
-            <div class="menu-card" onclick="showAdminPanel('users')"><h3>👥 Users</h3><p>Manage accounts</p></div>
-            <div class="menu-card" onclick="showAdminPanel('audit')"><h3>🔒 Audit Logs</h3><p>System trails</p></div>
-            <div class="menu-card" onclick="showAdminPanel('alldata')"><h3>🗂️ All Data</h3><p>Jobs & Apps</p></div>
+            <div class="menu-card" onclick="showAdminPanel('analytics')">
+                <h3>📊 System Analytics</h3>
+                <p>View all hiring metrics, performance data, and system-wide statistics</p>
+            </div>
+            <div class="menu-card" onclick="showAdminPanel('reports')">
+                <h3>📈 Advanced Reports</h3>
+                <p>Bias detection, skill gaps, hiring bottlenecks, and predictive analytics</p>
+            </div>
+            <div class="menu-card" onclick="showAdminPanel('users')">
+                <h3>👥 Manage Users</h3>
+                <p>View, edit, and manage all system users and role assignments</p>
+            </div>
+            <div class="menu-card" onclick="showAdminPanel('audit')">
+                <h3>🔒 Audit Logs</h3>
+                <p>Complete audit trail of all system activities and changes</p>
+            </div>
+            <div class="menu-card" onclick="showAdminPanel('alldata')">
+                <h3>🗂️ All Data</h3>
+                <p>Access all jobs, applications, and candidates across the system</p>
+            </div>
+            <div class="menu-card" onclick="showAdminPanel('system')">
+                <h3>⚙️ System Config</h3>
+                <p>Archive old data, anonymize candidates, system maintenance</p>
+            </div>
         </div>
+
         <div id="adminContent"></div>
     </div>
 
+    <!-- Recruiter Dashboard -->
     <div id="recruiterDashboard" class="dashboard container">
         <div class="dashboard-header">
-            <div><h1>Recruiter Dashboard</h1></div>
+            <div>
+                <h1>Recruiter Dashboard</h1>
+                <p>Manage Jobs & Applications</p>
+            </div>
             <div class="user-info">
                 <span class="role-badge role-recruiter">RECRUITER</span>
                 <h3 id="recruiterName"></h3>
                 <button class="btn btn-small" onclick="logout()">Logout</button>
             </div>
         </div>
+
         <div id="recruiterMenu" class="menu-grid">
-            <div class="menu-card" onclick="showRecruiterPanel('viewapps')"><h3>📋 Applications</h3><p>Review all</p></div>
-            <div class="menu-card" onclick="showRecruiterPanel('candidates')"><h3>🎯 Rankings</h3><p>Match scores</p></div>
-            <div class="menu-card" onclick="showRecruiterPanel('schedule')"><h3>📅 Interviews</h3><p>Schedule</p></div>
-            <div class="menu-card" onclick="showRecruiterPanel('hire')"><h3>✅ Hiring</h3><p>Finalize hire</p></div>
+            <div class="menu-card" onclick="showRecruiterPanel('viewapps')">
+                <h3>📋 View Applications</h3>
+                <p>Review all applications with filtering and sorting options</p>
+            </div>
+            <div class="menu-card" onclick="showRecruiterPanel('candidates')">
+                <h3>🎯 Review Candidates</h3>
+                <p>View candidate rankings with weighted match scores</p>
+            </div>
+            <div class="menu-card" onclick="showRecruiterPanel('schedule')">
+                <h3>📅 Schedule Interviews</h3>
+                <p>Schedule interviews with automatic conflict detection</p>
+            </div>
+            <div class="menu-card" onclick="showRecruiterPanel('updatestatus')">
+                <h3>🔄 Update Status</h3>
+                <p>Move applications through the hiring workflow</p>
+            </div>
+            <div class="menu-card" onclick="showRecruiterPanel('hire')">
+                <h3>✅ Hire Candidates</h3>
+                <p>Execute concurrency-safe hiring with vacancy control</p>
+            </div>
+            <div class="menu-card" onclick="showRecruiterPanel('feedback')">
+                <h3>💬 Interview Feedback</h3>
+                <p>Submit interview scores and recommendations</p>
+            </div>
         </div>
+
         <div id="recruiterContent"></div>
     </div>
 
+    <!-- Candidate Dashboard -->
     <div id="candidateDashboard" class="dashboard container">
         <div class="dashboard-header">
-            <div><h1>Candidate Dashboard</h1></div>
+            <div>
+                <h1>Candidate Dashboard</h1>
+                <p>Your Job Applications</p>
+            </div>
             <div class="user-info">
                 <span class="role-badge role-candidate">CANDIDATE</span>
                 <h3 id="candidateName"></h3>
                 <button class="btn btn-small" onclick="logout()">Logout</button>
             </div>
         </div>
+
         <div id="candidateMenu" class="menu-grid">
-            <div class="menu-card" onclick="showCandidatePanel('browse')"><h3>🔍 Browse</h3><p>Find jobs</p></div>
-            <div class="menu-card" onclick="showCandidatePanel('myapps')"><h3>📝 My Apps</h3><p>Track status</p></div>
-            <div class="menu-card" onclick="showCandidatePanel('profile')"><h3>👤 Profile</h3><p>Skills & Experience</p></div>
+            <div class="menu-card" onclick="showCandidatePanel('browse')">
+                <h3>🔍 Browse Jobs</h3>
+                <p>View all active job postings and apply</p>
+            </div>
+            <div class="menu-card" onclick="showCandidatePanel('myapps')">
+                <h3>📝 My Applications</h3>
+                <p>Track status of all your applications</p>
+            </div>
+            <div class="menu-card" onclick="showCandidatePanel('interviews')">
+                <h3>📅 My Interviews</h3>
+                <p>View scheduled interviews and confirm attendance</p>
+            </div>
+            <div class="menu-card" onclick="showCandidatePanel('profile')">
+                <h3>👤 Manage Profile</h3>
+                <p>Update skills, experience, and documents</p>
+            </div>
         </div>
+
         <div id="candidateContent"></div>
+    </div>
+
+    <!-- Modal for forms -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div id="modalBody"></div>
+        </div>
     </div>
 
     <script>
         let db;
         let currentUser = null;
+        let charts = {};
 
+        // Initialize database
         async function initDB() {
             try {
                 const SQL = await initSqlJs({
                     locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
                 });
+
                 const response = await fetch('recruitment.db');
-                if (!response.ok) throw new Error('Database file missing');
+                if (!response.ok) throw new Error('Database not found');
+                
                 const buffer = await response.arrayBuffer();
                 db = new SQL.Database(new Uint8Array(buffer));
-                console.log('DB Ready');
+                
+                console.log('Database loaded successfully');
             } catch (error) {
-                console.error(error);
-                alert('Database Error. Ensure recruitment.db is in the same folder.');
+                console.error('Database error:', error);
+                alert('Please upload recruitment.db file to your GitHub repository');
             }
         }
 
@@ -495,166 +635,320 @@
             try {
                 const result = db.exec(sql, params);
                 return result[0] || { columns: [], values: [] };
-            } catch (e) { return { columns: [], values: [] }; }
+            } catch (error) {
+                console.error('Query error:', error, sql);
+                return { columns: [], values: [] };
+            }
         }
 
         function fillLogin(email) {
             document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = 'demo123';
         }
 
         function login(event) {
             event.preventDefault();
             const email = document.getElementById('loginEmail').value;
-            const res = query(`SELECT u.UserID, u.Username, u.RoleID, r.RoleName, c.CandidateID, c.FullName FROM Users u JOIN Roles r ON u.RoleID = r.RoleID LEFT JOIN Candidates c ON u.UserID = c.UserID WHERE u.Email = '${email}'`);
             
-            if (!res.values.length) return alert('User not found');
-            const data = res.values[0];
-            currentUser = { userID: data[0], username: data[1], roleID: data[2], roleName: data[3], candidateID: data[4], candidateName: data[5] };
+            const result = query(`
+                SELECT u.UserID, u.Username, u.Email, u.RoleID, r.RoleName,
+                       c.CandidateID, c.FullName as CandidateName,
+                       rec.RecruiterID
+                FROM Users u
+                JOIN Roles r ON u.RoleID = r.RoleID
+                LEFT JOIN Candidates c ON u.UserID = c.UserID
+                LEFT JOIN Recruiters rec ON u.UserID = rec.UserID
+                WHERE u.Email = '${email}' AND u.IsActive = 1
+            `);
+
+            if (result.values.length === 0) {
+                alert('Invalid credentials or account inactive');
+                return;
+            }
+
+            const userData = result.values[0];
+            currentUser = {
+                userID: userData[0],
+                username: userData[1],
+                email: userData[2],
+                roleID: userData[3],
+                roleName: userData[4],
+                candidateID: userData[5],
+                candidateName: userData[6],
+                recruiterID: userData[7]
+            };
 
             document.getElementById('loginScreen').style.display = 'none';
-            if (currentUser.roleID === 1) showAdminDashboard();
-            else if (currentUser.roleID === 2) showRecruiterDashboard();
-            else showCandidateDashboard();
+            
+            if (currentUser.roleID === 1) {
+                showAdminDashboard();
+            } else if (currentUser.roleID === 2) {
+                showRecruiterDashboard();
+            } else if (currentUser.roleID === 3) {
+                showCandidateDashboard();
+            }
         }
 
-        function logout() { location.reload(); }
+        function logout() {
+            currentUser = null;
+            document.getElementById('adminDashboard').classList.remove('active');
+            document.getElementById('recruiterDashboard').classList.remove('active');
+            document.getElementById('candidateDashboard').classList.remove('active');
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginForm').reset();
+        }
 
-        /* Admin Panels */
+        // Admin Functions
         function showAdminDashboard() {
             document.getElementById('adminName').textContent = currentUser.username;
             document.getElementById('adminDashboard').classList.add('active');
         }
 
         function showAdminPanel(panel) {
-            const container = document.getElementById('adminContent');
-            container.innerHTML = '<button class="btn btn-secondary back-btn" onclick="this.parentElement.innerHTML=\'\'">← Back</button><div id="panelData"></div>';
-            const dataDiv = document.getElementById('panelData');
-            if (panel === 'analytics') showSystemAnalytics(dataDiv);
-            if (panel === 'users') showAllUsers(dataDiv);
-            if (panel === 'audit') showAuditLogs(dataDiv);
-            if (panel === 'alldata') showAllData(dataDiv);
+            const content = document.getElementById('adminContent');
+            content.innerHTML = '<div class="content-panel active"><button class="btn btn-secondary back-btn" onclick="hideAdminPanel()">← Back to Menu</button><div id="panelData"></div></div>';
+            const panelData = document.getElementById('panelData');
+
+            if (panel === 'analytics') {
+                showSystemAnalytics(panelData);
+            } else if (panel === 'reports') {
+                showAdvancedReports(panelData);
+            } else if (panel === 'users') {
+                showAllUsers(panelData);
+            } else if (panel === 'audit') {
+                showAuditLogs(panelData);
+            } else if (panel === 'alldata') {
+                showAllData(panelData);
+            } else if (panel === 'system') {
+                showSystemConfig(panelData);
+            }
+        }
+
+        function hideAdminPanel() {
+            document.getElementById('adminContent').innerHTML = '';
         }
 
         function showSystemAnalytics(container) {
-            const stats = query("SELECT (SELECT COUNT(*) FROM Candidates), (SELECT COUNT(*) FROM JobPostings), (SELECT COUNT(*) FROM Applications)");
-            const v = stats.values[0];
-            container.innerHTML = `<h2>📊 Analytics</h2><div class="stats-grid"><div class="stat-card"><h3>${v[0]}</h3><p>Candidates</p></div><div class="stat-card"><h3>${v[1]}</h3><p>Jobs</p></div><div class="stat-card"><h3>${v[2]}</h3><p>Apps</p></div></div>`;
+            const candidates = query('SELECT COUNT(*) FROM Candidates').values[0][0];
+            const jobs = query('SELECT COUNT(*) FROM JobPostings WHERE IsActive = 1').values[0][0];
+            const applications = query('SELECT COUNT(*) FROM Applications').values[0][0];
+            const hired = query('SELECT COUNT(*) FROM Applications WHERE StatusID = 4').values[0][0];
+
+            container.innerHTML = `
+                <h2>📊 System Analytics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>${candidates}</h3><p>Total Candidates</p></div>
+                    <div class="stat-card"><h3>${jobs}</h3><p>Active Jobs</p></div>
+                    <div class="stat-card"><h3>${applications}</h3><p>Total Applications</p></div>
+                    <div class="stat-card"><h3>${hired}</h3><p>Hired</p></div>
+                </div>
+                <div class="chart-container">
+                    <h3>Application Funnel</h3>
+                    <canvas id="adminFunnelChart"></canvas>
+                </div>
+            `;
+
+            const funnel = query('SELECT * FROM vw_ApplicationFunnel');
+            const ctx = document.getElementById('adminFunnelChart');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: funnel.values.map(r => r[0]),
+                    datasets: [{
+                        label: 'Applications',
+                        data: funnel.values.map(r => r[1]),
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)'
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function showAdvancedReports(container) {
+            const bias = query('SELECT * FROM vw_Bias_Location');
+            const biasExp = query('SELECT * FROM vw_Bias_Experience');
+            const skills = query('SELECT * FROM vw_SkillGapAnalysis WHERE JobsRequiringSkill > 0 ORDER BY SkillGap DESC LIMIT 10');
+            const bottlenecks = query('SELECT * FROM vw_HiringBottlenecks');
+            const silent = query('SELECT * FROM vw_SilentRejections');
+            const rejections = query('SELECT * FROM vw_RejectionAnalysis');
+            const avgTime = query('SELECT * FROM vw_AverageTimeToHire');
+            const recruiterPerf = query('SELECT * FROM vw_RecruiterPerformance');
+            const interviewScore = query('SELECT * FROM vw_InterviewScoreVsDecision');
+            const interviewerConsist = query('SELECT * FROM vw_InterviewerConsistency');
+            const engagement = query('SELECT * FROM vw_CandidateEngagement');
+            const vacancy = query('SELECT * FROM vw_VacancyUtilization');
+            
+            let html = '<h2>📈 Advanced Reports & Analytics</h2>';
+            html += '<div class="alert alert-warning">⚠️ Bias detection flags statistical anomalies for review - does not accuse bias</div>';
+            
+            // Stats Grid
+            html += '<div class="stats-grid">';
+            if (avgTime.values.length > 0 && avgTime.values[0][0]) {
+                html += `<div class="stat-card"><h3>${Math.round(avgTime.values[0][0])}</h3><p>Avg Days to Hire</p></div>`;
+            }
+            html += '</div>';
+            
+            // Bias Detection by Location
+            html += '<h3 style="margin-top:30px">🌍 Bias Detection: Location</h3>';
+            html += '<table><tr><th>Location</th><th>Applicants</th><th>Hired</th><th>Rate %</th></tr>';
+            bias.values.forEach(row => {
+                const rate = row[3] || 0;
+                const rateColor = rate < 10 ? '#c62828' : rate > 15 ? '#388e3c' : '#f57c00';
+                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td style="color:${rateColor};font-weight:bold">${rate}%</td></tr>`;
+            });
+            html += '</table>';
+            
+            // Bias Detection by Experience
+            html += '<h3 style="margin-top:30px">📊 Bias Detection: Experience Level</h3>';
+            html += '<table><tr><th>Experience Group</th><th>Applicants</th><th>Hired</th><th>Rate %</th></tr>';
+            biasExp.values.forEach(row => {
+                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}%</td></tr>`;
+            });
+            html += '</table>';
+            
+            // Skill Gap Analysis
+            html += '<h3 style="margin-top:30px">🎯 Skill Gap Analysis</h3>';
+            html += '<table><tr><th>Skill</th><th>Jobs Requiring</th><th>Candidates Having</th><th>Gap</th></tr>';
+            skills.values.forEach(row => {
+                const gapColor = row[3] > 5 ? '#c62828' : row[3] > 2 ? '#f57c00' : '#388e3c';
+                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td style="color:${gapColor};font-weight:bold">${row[3]}</td></tr>`;
+            });
+            html += '</table>';
+            
+            // Hiring Bottlenecks
+            html += '<h3 style="margin-top:30px">⏱️ Hiring Bottlenecks</h3>';
+            html += '<table><tr><th>Stage</th><th>Applications</th><th>Avg Days in Stage</th></tr>';
+            bottlenecks.values.forEach(row => {
+                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2] ? Math.round(row[2]) : 'N/A'}</td></tr>`;
+            });
+            html += '</table>';
+            
+            // Silent Rejections
+            if (silent.values.length > 0) {
+                html += '<h3 style="margin-top:30px">⚠️ Silent Rejections (>30 days inactive)</h3>';
+                html += '<table><tr><th>Candidate</th><th>Job</th><th>Status</th><th>Days Inactive</th></tr>';
+                silent.values.forEach(row => {
+                    html += `<tr><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td style="color:#c62828;font-weight:bold">${row[4]}</td></tr>`;
+                });
+                html += '</table>';
+            }
+            
+            // Rejection Analysis
+            if (rejections.values.length > 0) {
+                html += '<h3 style="margin-top:30px">📉 Rejection Analysis</h3>';
+                html += '<table><tr><th>Reason</th><th>Count</th></tr>';
+                rejections.values.forEach(row => {
+                    html += `<tr><td>${row[0]}</td><td>${row[1]}</td></tr>`;
+                });
+                html += '</table>';
+            }
+            
+            // Recruiter Performance
+            if (recruiterPerf.values.length > 0) {
+                html += '<h3 style="margin-top:30px">👔 Recruiter Performance</h3>';
+                html += '<table><tr><th>Recruiter ID</th><th>Interviews Conducted</th><th>Successful Hires</th></tr>';
+                recruiterPerf.values.forEach(row => {
+                    html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>`;
+                });
+                html += '</table>';
+            }
+            
+            // Interview Score vs Decision
+            if (interviewScore.values.length > 0) {
+                html += '<h3 style="margin-top:30px">🎓 Interview Score vs Final Decision</h3>';
+                html += '<table><tr><th>Candidate</th><th>Avg Interview Score</th><th>Final Status</th><th>Alignment</th></tr>';
+                interviewScore.values.forEach(row => {
+                    const score = row[2];
+                    const status = row[3];
+                    let alignment = 'Review Needed';
+                    if ((status === 'Hired' && score >= 7) || (status === 'Rejected' && score < 5)) {
+                        alignment = 'Aligned';
+                    }
+                    const alignColor = alignment === 'Aligned' ? '#388e3c' : '#f57c00';
+                    html += `<tr><td>${row[1]}</td><td>${score.toFixed(1)}</td><td>${getStatusBadge(status)}</td><td style="color:${alignColor};font-weight:bold">${alignment}</td></tr>`;
+                });
+                html += '</table>';
+            }
+            
+            // Interviewer Consistency
+            if (interviewerConsist.values.length > 0) {
+                html += '<h3 style="margin-top:30px">📋 Interviewer Consistency</h3>';
+                html += '<table><tr><th>Interviewer ID</th><th>Interviews</th><th>Avg Score Given</th><th>Assessment</th></tr>';
+                interviewerConsist.values.forEach(row => {
+                    const avgScore = row[2];
+                    let assessment = 'Balanced';
+                    let assessColor = '#388e3c';
+                    if (avgScore > 8.5) {
+                        assessment = 'Too Lenient';
+                        assessColor = '#f57c00';
+                    } else if (avgScore < 5) {
+                        assessment = 'Too Harsh';
+                        assessColor = '#c62828';
+                    }
+                    html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${avgScore.toFixed(1)}</td><td style="color:${assessColor};font-weight:bold">${assessment}</td></tr>`;
+                });
+                html += '</table>';
+            }
+            
+            // Candidate Engagement
+            if (engagement.values.length > 0) {
+                html += '<h3 style="margin-top:30px">💼 Candidate Engagement</h3>';
+                html += '<table><tr><th>Candidate</th><th>Interviews Scheduled</th><th>Confirmed</th><th>Engagement Rate</th></tr>';
+                engagement.values.forEach(row => {
+                    const rate = row[4] || 0;
+                    const rateColor = rate > 75 ? '#388e3c' : rate > 50 ? '#f57c00' : '#c62828';
+                    html += `<tr><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td style="color:${rateColor};font-weight:bold">${rate.toFixed(0)}%</td></tr>`;
+                });
+                html += '</table>';
+            }
+            
+            // Vacancy Utilization
+            if (vacancy.values.length > 0) {
+                html += '<h3 style="margin-top:30px">📊 Vacancy Utilization</h3>';
+                html += '<table><tr><th>Job</th><th>Remaining Vacancies</th><th>Total Applications</th><th>Filled Positions</th></tr>';
+                vacancy.values.forEach(row => {
+                    html += `<tr><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td></tr>`;
+                });
+                html += '</table>';
+            }
+            
+            container.innerHTML = html;
         }
 
         function showAllUsers(container) {
-            const users = query("SELECT UserID, Username, Email FROM Users");
-            let html = '<h2>👥 Users</h2><table><tr><th>ID</th><th>Name</th><th>Email</th></tr>';
-            users.values.forEach(r => html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`);
-            container.innerHTML = html + '</table>';
+            const users = query(`
+                SELECT u.UserID, u.Username, u.Email, r.RoleName, u.IsActive
+                FROM Users u
+                JOIN Roles r ON u.RoleID = r.RoleID
+                ORDER BY r.RoleName, u.Username
+            `);
+
+            let html = '<h2>👥 Manage Users</h2><table><tr><th>User ID</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th></tr>';
+            users.values.forEach(row => {
+                const status = row[4] ? '<span class="badge badge-hired">Active</span>' : '<span class="badge badge-rejected">Inactive</span>';
+                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${status}</td></tr>`;
+            });
+            html += '</table>';
+            container.innerHTML = html;
         }
 
         function showAuditLogs(container) {
-            const logs = query("SELECT TableName, Operation, ChangedAt FROM AuditLog LIMIT 10");
-            let html = '<h2>🔒 Logs</h2><table><tr><th>Table</th><th>Op</th><th>Date</th></tr>';
-            logs.values.forEach(r => html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`);
-            container.innerHTML = html + '</table>';
+            const logs = query('SELECT * FROM AuditLog ORDER BY ChangedAt DESC LIMIT 50');
+            let html = '<h2>🔒 Audit Logs</h2><table><tr><th>Table</th><th>Record ID</th><th>Operation</th><th>Old Value</th><th>New Value</th><th>Changed By</th><th>Date</th></tr>';
+            
+            logs.values.forEach(row => {
+                html += `<tr><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td><td>${row[5]}</td><td>${row[6]}</td><td>${row[7]}</td></tr>`;
+            });
+            
+            html += '</table>';
+            container.innerHTML = html;
         }
 
         function showAllData(container) {
             const jobs = query('SELECT JobID, JobTitle, Location, Vacancies, IsActive FROM JobPostings');
-            let html = '<h2>🗂️ All Job Postings</h2><table><tr><th>ID</th><th>Title</th><th>Location</th><th>Vacancies</th><th>Status</th></tr>';
-            jobs.values.forEach(row => {
-                const status = row[4] ? '<span class="badge badge-hired">Active</span>' : '<span class="badge badge-rejected">Inactive</span>';
-                html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${status}</td></tr>`;
-            });
-            container.innerHTML = html + '</table>';
-        }
+            const apps = query('SELECT COUNT(*) FROM Applications').values[0][0];
+            const candidates = query('SELECT COUNT(*) FROM Candidates').values[0][0];
 
-        /* Recruiter Panels */
-        function showRecruiterDashboard() {
-            document.getElementById('recruiterName').textContent = currentUser.username;
-            document.getElementById('recruiterDashboard').classList.add('active');
-        }
-
-        function showRecruiterPanel(panel) {
-            const container = document.getElementById('recruiterContent');
-            container.innerHTML = '<button class="btn btn-secondary back-btn" onclick="this.parentElement.innerHTML=\'\'">← Back</button><div id="panelData"></div>';
-            const dataDiv = document.getElementById('panelData');
-            if (panel === 'viewapps') showAllApplications(dataDiv);
-            if (panel === 'candidates') showCandidateRankings(dataDiv);
-            if (panel === 'schedule') showScheduleInterview(dataDiv);
-            if (panel === 'hire') showHireCandidates(dataDiv);
-        }
-
-        function showAllApplications(container) {
-            const apps = query("SELECT a.ApplicationID, c.FullName, j.JobTitle, s.StatusName FROM Applications a JOIN Candidates c ON a.CandidateID = c.CandidateID JOIN JobPostings j ON a.JobID = j.JobID JOIN ApplicationStatus s ON a.StatusID = s.StatusID");
-            let html = '<h2>📋 Applications</h2><table><tr><th>ID</th><th>Name</th><th>Job</th><th>Status</th></tr>';
-            apps.values.forEach(r => html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${getStatusBadge(r[3])}</td></tr>`);
-            container.innerHTML = html + '</table>';
-        }
-
-        function showCandidateRankings(container) {
-            const rankings = query("SELECT * FROM vw_CandidateMatchScore ORDER BY TotalMatchScore DESC");
-            let html = '<h2>🎯 Candidate Rankings</h2>';
-            rankings.values.forEach(row => {
-                html += `<div class="application-card"><h3>${row[1]}</h3><p>Job: ${row[3]} | Score: ${row[7]}</p><div class="progress-bar"><div class="progress-fill" style="width:${row[7]}%"></div></div></div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function showScheduleInterview(container) {
-            container.innerHTML = '<h2>📅 Scheduling</h2><p>Select a candidate from the applications list to set an interview date.</p>';
-        }
-
-        function showHireCandidates(container) {
-            const apps = query("SELECT a.ApplicationID, c.FullName, j.JobTitle FROM Applications a JOIN Candidates c ON a.CandidateID = c.CandidateID JOIN JobPostings j ON a.JobID = j.JobID WHERE a.StatusID = 3");
-            let html = '<h2>✅ Hire Candidates</h2>';
-            if (!apps.values.length) html += '<p>No candidates ready for hire.</p>';
-            else {
-                html += '<table><tr><th>Name</th><th>Job</th><th>Action</th></tr>';
-                apps.values.forEach(r => html += `<tr><td>${r[1]}</td><td>${r[2]}</td><td><button class="btn btn-small" onclick="alert('Hired!')">Confirm Hire</button></td></tr>`);
-                html += '</table>';
-            }
-            container.innerHTML = html;
-        }
-
-        /* Candidate Panels */
-        function showCandidateDashboard() {
-            document.getElementById('candidateName').textContent = currentUser.candidateName || currentUser.username;
-            document.getElementById('candidateDashboard').classList.add('active');
-        }
-
-        function showCandidatePanel(panel) {
-            const container = document.getElementById('candidateContent');
-            container.innerHTML = '<button class="btn btn-secondary back-btn" onclick="this.parentElement.innerHTML=\'\'">← Back</button><div id="panelData"></div>';
-            const dataDiv = document.getElementById('panelData');
-            if (panel === 'browse') showBrowseJobs(dataDiv);
-            if (panel === 'myapps') showMyApplications(dataDiv);
-            if (panel === 'profile') showMyProfile(dataDiv);
-        }
-
-        function showBrowseJobs(container) {
-            const jobs = query("SELECT JobID, JobTitle, Location, Vacancies FROM JobPostings WHERE IsActive = 1");
-            let html = '<h2>🔍 Available Jobs</h2>';
-            jobs.values.forEach(r => html += `<div class="application-card"><h3>${r[1]}</h3><p>${r[2]} | Vacancies: ${r[3]}</p><button class="btn btn-small" onclick="alert('Applied!')">Apply</button></div>`);
-            container.innerHTML = html;
-        }
-
-        function showMyApplications(container) {
-            const apps = query(`SELECT j.JobTitle, s.StatusName, a.AppliedDate FROM Applications a JOIN JobPostings j ON a.JobID = j.JobID JOIN ApplicationStatus s ON a.StatusID = s.StatusID WHERE a.CandidateID = ${currentUser.candidateID}`);
-            let html = '<h2>📝 My Applications</h2>';
-            if (!apps.values.length) html += '<p>No applications yet.</p>';
-            apps.values.forEach(r => html += `<div class="application-card"><h3>${r[0]}</h3><p>Status: ${getStatusBadge(r[1])} | Date: ${r[2]}</p></div>`);
-            container.innerHTML = html;
-        }
-
-        function showMyProfile(container) {
-            const prof = query(`SELECT FullName, Location, YearsOfExperience FROM Candidates WHERE CandidateID = ${currentUser.candidateID}`);
-            const d = prof.values[0];
-            container.innerHTML = `<h2>👤 Profile</h2><div class="application-card"><h3>${d[0]}</h3><p>Location: ${d[1]}</p><p>Exp: ${d[2]} years</p></div>`;
-        }
-
-        function getStatusBadge(status) {
-            const badges = { 'Applied': 'badge-applied', 'Screening': 'badge-screening', 'Interview': 'badge-interview', 'Hired': 'badge-hired', 'Rejected': 'badge-rejected' };
-            return `<span class="badge ${badges[status] || ''}">${status}</span>`;
-        }
-
-        window.onload = initDB;
-    </script>
-</body>
-</html>
+            let html = `<h2>🗂️ All Data</h2>`;
+            html += `<div class="alert alert-info">Total: ${candidates} candidates, ${jobs.values.length} jobs, ${apps} applications</div>`;
+            html += '<h3>All Job Postings</h3><table><tr><th>ID</th><th>Title</th>
