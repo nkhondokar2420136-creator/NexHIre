@@ -128,39 +128,74 @@
             const response = await fetch('recruitment.db');
             const buffer = await response.arrayBuffer();
             db = new SQL.Database(new Uint8Array(buffer));
-            console.log("Database Loaded");
+            console.log("Database Synced with Showcase Schema");
         }
 
         function query(sql) {
             try {
                 const res = db.exec(sql);
                 return res[0] || { columns: [], values: [] };
-            } catch (e) {
-                console.error("SQL Error:", e);
-                return { columns: [], values: [] };
-            }
+            } catch (e) { return { columns: [], values: [] }; }
         }
 
         function login(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
-            const res = query(`SELECT u.UserID, u.Username, r.RoleName, u.RoleID FROM Users u JOIN Roles r ON u.RoleID = r.RoleID WHERE u.Email = '${email}'`);
+            // Matches your 'Users' and 'Roles' tables
+            const res = query(`SELECT u.UserID, u.Username, u.RoleID, r.RoleName FROM Users u JOIN Roles r ON u.RoleID = r.RoleID WHERE u.Email = '${email}'`);
             
             if (res.values.length) {
-                currentUser = { id: res.values[0][0], name: res.values[0][1], role: res.values[0][2], roleID: res.values[0][3] };
+                const data = res.values[0];
+                currentUser = { id: data[0], name: data[1], roleID: data[2], roleName: data[3] };
+                
+                // Route based on your Role IDs (1: Admin, 2: Recruiter, 3: Candidate)
                 document.getElementById('loginScreen').style.display = 'none';
-                if (currentUser.roleID === 1) {
-                    document.getElementById('adminDashboard').classList.add('active');
-                    document.getElementById('adminName').innerText = currentUser.name;
-                } else {
-                    document.getElementById('recruiterDashboard').classList.add('active');
-                    document.getElementById('recruiterName').innerText = currentUser.name;
-                }
+                if (currentUser.roleID === 1) showAdminDashboard();
+                else if (currentUser.roleID === 2) showRecruiterDashboard();
+                else showCandidateDashboard();
             } else {
-                alert("Invalid Login");
+                alert("User not found in recruitment.db");
             }
         }
 
+        // --- ADMIN ANALYTICS (Using your Views) ---
+        function showSystemAnalytics(container) {
+            container.innerHTML = '<h2>📊 Advanced DBMS Analytics</h2>';
+            
+            // 1. Funnel Analysis (Using vw_ApplicationFunnel)
+            const funnel = query("SELECT * FROM vw_ApplicationFunnel");
+            let funnelHtml = '<h3>📈 Application Funnel</h3><div class="stats-grid">';
+            funnel.values.forEach(r => {
+                funnelHtml += `<div class="stat-card"><h3>${r[1]}</h3><p>${r[0]}</p></div>`;
+            });
+            container.innerHTML += funnelHtml + '</div>';
+
+            // 2. Bias Detection (Using vw_Bias_Location)
+            const bias = query("SELECT * FROM vw_Bias_Location");
+            let biasHtml = '<h3>🌍 Location Hire-Rate (Bias Detection)</h3><table><tr><th>Location</th><th>Applicants</th><th>Hire Rate</th></tr>';
+            bias.values.forEach(r => {
+                biasHtml += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[3].toFixed(1)}%</td></tr>`;
+            });
+            container.innerHTML += biasHtml + '</table>';
+        }
+
+        // --- RECRUITER RANKINGS (Using your Match Score View) ---
+        function showCandidateRankings(container) {
+            const rankings = query("SELECT * FROM vw_CandidateMatchScore ORDER BY TotalMatchScore DESC");
+            let html = '<h2>🎯 AI-Based Candidate Match</h2>';
+            rankings.values.forEach(r => {
+                // Calculation: TotalMatchScore / Max Possible (approx 100)
+                const score = r[7]; 
+                html += `
+                    <div class="application-card">
+                        <h3>${r[1]} <small>for ${r[3]}</small></h3>
+                        <p>Skill Score: ${r[4]} | Experience Score: ${r[5]} | Location Bonus: ${r[6]}</p>
+                        <div class="progress-bar"><div class="progress-fill" style="width:${score}%"></div></div>
+                        <strong>Total Match: ${score} points</strong>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
         function logout() { location.reload(); }
 
         function showAdminPanel(panel) {
